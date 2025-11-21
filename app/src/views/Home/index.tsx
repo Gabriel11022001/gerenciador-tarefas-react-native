@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import CategoriaTarefa from "../../components/CategoriaTarefa";
 import FiltroTarefas, { TipoFiltro } from "../../components/FiltroTarefas";
+import ListaTarefas from "../../components/ListaTarefas";
 import PessoaLogada from "../../components/PessoaLogada";
 import Tela from "../../components/Tela";
 import Titulo from "../../components/Titulo";
@@ -17,11 +18,49 @@ export type CategoriaTarefa = {
 
 }
 
+export enum Status {
+
+  concluido,
+  andamento
+
+}
+
+export type Tarefa = {
+
+  id: number;
+  titulo: string;
+  categoriaTarega: CategoriaTarefa;
+  descricao: string;
+  status: Status;
+  dataLimiteConclusao: string;
+
+}
+
 const Home = () => {
 
   const [ carregando, setCarregando ] = useState<boolean>(false);
   const [ categorias, setCategorias ] = useState<Array<CategoriaTarefa>>([]);
   const [ filtroSelecionado, setFiltroSelecionado ] = useState<TipoFiltro | null>(null);
+  const [ tarefas, setTarefas ] = useState<Array<Tarefa>>([]);
+
+  const gerarTarefasTesteMock = (): Array<Tarefa> => {
+    const tarefasMock: Array<Tarefa> = [];
+
+    for (let i: number = 0; i < 100; i++) {
+      const tarefaTeste: Tarefa = {
+        id: i + 1,
+        titulo: `Tarefa de teste ${ i + 1 }`,
+        categoriaTarega: categorias[ 0 ],
+        dataLimiteConclusao: "11/02/2026",
+        descricao: "Descrição da tarefa de teste",
+        status: i % 2 == 0 ? Status.andamento : Status.concluido
+      }
+
+      tarefasMock.push(tarefaTeste);
+    }
+
+    return tarefasMock;
+  }
 
   // listar as categorias de tarefas
   const carregarCategoriasTarefas = async () => {
@@ -39,6 +78,7 @@ const Home = () => {
 
   useEffect(() => {
     carregarCategoriasTarefas();
+    filtrarTarefas(TipoFiltro.hoje);
   }, []);
   
   // redirecionar o usuário para a tela para visualizar a tarefa
@@ -55,11 +95,34 @@ const Home = () => {
   // filtrar tarefas por tipo
   const filtrarTarefas = (tipoFiltro: TipoFiltro): void => {
     setFiltroSelecionado(tipoFiltro);
+
+    let tarefasFiltro: Array<Tarefa> = [];
+    const tarefasMock: Array<Tarefa> = gerarTarefasTesteMock();
+
+    if (tipoFiltro == TipoFiltro.hoje) {
+      // buscar somente as tarefas de hoje
+    } else if (tipoFiltro == TipoFiltro.todos) {
+      // buscar todas as tarefas
+      tarefasFiltro = tarefasMock;
+    } else {
+      // buscar as tarefas completadas
+      tarefasFiltro = tarefasMock.filter((tarefaValidar: Tarefa) => {
+
+        return tarefaValidar.status == Status.concluido;
+      });
+    }
+
+    setTarefas(tarefasFiltro);
+  }
+
+  // visualizar tarefa
+  const visualizarTarefa = (idTarefaVisualizar: number): void => {
+    console.log("Visualizar tarefa de id: " + idTarefaVisualizar);
   }
 
   return (
     <Tela>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={ false }>
         { /** nome e foto da pessoa logada */ }
         <PessoaLogada nomePessoa="Gabriel Rodrigues" fotoPessoa="https://tse2.mm.bing.net/th/id/OIP.CsC304Xa0Ct_yfyqgaEXCAHaEJ?rs=1&pid=ImgDetMain&o=7&rm=3" />
         <Titulo titulo="Categorias" />
@@ -86,6 +149,9 @@ const Home = () => {
             filtrarTarefas(tipoFiltro);
           } }
           selecionado={ filtroSelecionado != null ? filtroSelecionado : TipoFiltro.hoje } />
+        <ListaTarefas tarefas={ tarefas } onVisualizar={ (idTarefaVisualizar: number) => {
+          visualizarTarefa(idTarefaVisualizar);
+        } } />
       </ScrollView>
     </Tela>
   );
