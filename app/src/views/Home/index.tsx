@@ -25,6 +25,19 @@ export enum Status {
 
 }
 
+export type EquipeTarefa = {
+
+  membros?: Array<MembroEquipeTarefa>;
+
+}
+
+export type MembroEquipeTarefa = {
+
+  nomeMembro: string;
+  foto: string;
+
+}
+
 export type Tarefa = {
 
   id: number;
@@ -33,10 +46,11 @@ export type Tarefa = {
   descricao: string;
   status: Status;
   dataLimiteConclusao: string;
+  equipeTarefa?: EquipeTarefa;
 
 }
 
-const Home = () => {
+const Home = ({ navigation }: any) => {
 
   const [ carregando, setCarregando ] = useState<boolean>(false);
   const [ categorias, setCategorias ] = useState<Array<CategoriaTarefa>>([]);
@@ -53,7 +67,23 @@ const Home = () => {
         categoriaTarega: categorias[ 0 ],
         dataLimiteConclusao: "11/02/2026",
         descricao: "Descrição da tarefa de teste",
-        status: i % 2 == 0 ? Status.andamento : Status.concluido
+        status: i % 2 == 0 ? Status.andamento : Status.concluido,
+        equipeTarefa: {
+          membros: [
+            {
+              nomeMembro: "Membro de teste 1",
+              foto: "https://cdn.pixabay.com/photo/2018/03/17/12/12/portrait-3233851_960_720.jpg"
+            },
+            {
+              nomeMembro: "Membro de teste 2",
+              foto: "https://th.bing.com/th/id/R.44e62c64304fed40bdc426f02759ef4a?rik=Vz1TOGBs5LSlTA&riu=http%3a%2f%2fwww.bellutti.com.br%2farquivos%2fimg_equipe%2fhomem-de-negocios-novo-consideravel-na-camisa-e-nos-monoculos-8574-628-%5b27-05-22%5d%5b12-54-05%5d.webp&ehk=HMuXXiQQXfDG1z9fTH3OeOx2daJYSCEN3hsGF5ysLGM%3d&risl=&pid=ImgRaw&r=0"
+            },
+            {
+              nomeMembro: "Membro de teste 3",
+              foto: "https://www.sas.com/content/dam/SAS/images/personas/man-glasses-laptop.jpg/_jcr_content/renditions/cq5dam.thumbnail.319.319.png"
+            }
+          ]
+        }
       }
 
       tarefasMock.push(tarefaTeste);
@@ -118,6 +148,8 @@ const Home = () => {
   // visualizar tarefa
   const visualizarTarefa = (idTarefaVisualizar: number): void => {
     console.log("Visualizar tarefa de id: " + idTarefaVisualizar);
+
+    navigation.navigate("datalhesTarefa", { idTarefaVisualizar: idTarefaVisualizar, tarefas: tarefas });
   }
 
   return (
