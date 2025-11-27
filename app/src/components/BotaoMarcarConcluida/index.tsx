@@ -11,7 +11,7 @@ const BotaoMarcarConcluida = (props: BotaoMarcarConcluidaProps) => {
   return (
     <View style={ styles.container }>
       <TouchableOpacity onPress={ () => {
-          props.marcarConcluidaClick
+          props.marcarConcluidaClick();
         } } style={ styles.botao } >
         <Text style={ styles.textoBotao }>Marcar como concluído</Text>
       </TouchableOpacity>

@@ -63,6 +63,18 @@ const DetalhesTarefa = ({ navigation, route }: any) => {
   async function marcarTarefaConcluido() {
 
     try {
+      
+      if (route.params.idTarefaVisualizar && route.params.tarefas) {
+        
+        for (let i: number = 0; i < route.params.tarefas.length; i++) {
+          
+          if (route.params.tarefas[ i ].id == route.params.idTarefaVisualizar) {
+            
+          }
+
+        }
+
+      }
 
     } catch (e) {
       console.error("Erro ao tentar-se marcar a tarefa como concluída: " + e);
@@ -95,6 +107,7 @@ const DetalhesTarefa = ({ navigation, route }: any) => {
         <ListaMembrosEquipe membros={ getMembros(tarefa) } />
         { tarefa?.status != Status.concluido && <BotaoMarcarConcluida marcarConcluidaClick={ () => {
           // marcar a tarefa como concluído
+          marcarTarefaConcluido();
         } } /> }
       </ScrollView>
     </Tela>
